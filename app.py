@@ -31,39 +31,32 @@ def index():
     return render_template('index.html', quote=quotes[np.random.randint(0, len(quotes))])
 
 def huggingface_chat(user_input):
-    # Use your Hugging Face API key stored in an environment variable
-    API_URL = "https://api-inference.huggingface.co/models/google/gemma-2b"
+    API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
     headers = {
         "Authorization": f"Bearer {os.getenv('HF_API_KEY')}"
     }
     payload = {
         "inputs": f"User: {user_input}\nAssistant:",
         "parameters": {
-            "max_new_tokens": 150,
+            "max_new_tokens": 200,
             "temperature": 0.7,
-            "return_full_text": False  # don't echo the prompt
+            "return_full_text": False
         }
     }
 
     try:
-        response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=60)
         response.raise_for_status()
         data = response.json()
-
-        # Debug log
-        print("HuggingFace raw response:", data)
-
-        # Extract reply
+        print("Hugging Face raw response:", data)  # 👀 log for Render
         if isinstance(data, list) and len(data) > 0 and 'generated_text' in data[0]:
-            reply = data[0]['generated_text'].strip()
-            # Remove leftover "Assistant:" tags if present
-            reply = reply.replace("Assistant:", "").strip()
-            return reply
+            return data[0]['generated_text'].strip()
         else:
             return "The AI did not return a valid response."
     except Exception as e:
         print(f"HuggingFace API error: {str(e)}")
         return "Error connecting to the AI service."
+
 
 
 @app.route('/chat', methods=['POST'])
