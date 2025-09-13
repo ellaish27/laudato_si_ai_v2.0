@@ -32,7 +32,7 @@ def index():
 
 def huggingface_chat(user_input):
     # Use your Hugging Face API key stored in an environment variable
-    API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+    API_URL = "https://api-inference.huggingface.co/models/google/gemma-2b"
     headers = {
         "Authorization": f"Bearer {os.getenv('HF_API_KEY')}"
     }
